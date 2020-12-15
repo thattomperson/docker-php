@@ -27,14 +27,11 @@
         "symfony/process": "^5.2"
     },
     "suggest": {
-        "php-http/httplug-bundle": "For integration with Symfony",
-        "amphp/artax": "To use the async api"
+        "php-http/httplug-bundle": "For integration with Symfony"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
-        "friendsofphp/php-cs-fixer": "^2.17",
-        "amphp/artax": "^3.0",
-        "amphp/socket": "^0.10.5"
+        "friendsofphp/php-cs-fixer": "^2.17"
     },
     "conflict": {
         "amphp/socket": "<0.10.5",
