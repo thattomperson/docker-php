@@ -87,7 +87,7 @@ class AttachWebsocketStream
      * @param int  $waitMicroTime Time to wait in microseconds before return false
      * @param bool $getFrame      Whether to return the frame of websocket or only the data
      *
-     * @return null|false|string|array Null for socket not available, false for no message, string for the last message and the frame array if $getFrame is set to true
+     * @return false|string|array|null Null for socket not available, false for no message, string for the last message and the frame array if $getFrame is set to true
      */
     public function read($waitTime = 0, $waitMicroTime = 200000, $getFrame = false)
     {

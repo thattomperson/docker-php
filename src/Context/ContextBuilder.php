@@ -276,7 +276,7 @@ class ContextBuilder
     {
         $dockerfile = [];
         // Insert a FROM instruction if the file does not start with one.
-        if (empty($this->commands) || $this->commands[0]['type'] !== 'FROM') {
+        if (empty($this->commands) || 'FROM' !== $this->commands[0]['type']) {
             $dockerfile[] = 'FROM base';
         }
         foreach ($this->commands as $command) {
@@ -325,7 +325,7 @@ class ContextBuilder
             $dockerfile[] = 'CMD '.$this->command;
         }
 
-        $this->fs->dumpFile($directory.DIRECTORY_SEPARATOR.'Dockerfile', \implode(PHP_EOL, $dockerfile));
+        $this->fs->dumpFile($directory.\DIRECTORY_SEPARATOR.'Dockerfile', \implode(PHP_EOL, $dockerfile));
     }
 
     /**

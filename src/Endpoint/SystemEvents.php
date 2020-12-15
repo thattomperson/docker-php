@@ -4,40 +4,22 @@ declare(strict_types=1);
 
 namespace Docker\Endpoint;
 
-use Amp\Artax\Client as ArtaxClient;
 use Docker\API\Endpoint\SystemEvents as BaseEndpoint;
-use Docker\Client\AmpArtaxStreamEndpoint;
-use Docker\Client\AmpArtaxStreamEndpointTrait;
-use Docker\Client\ProvideAmpArtaxClientOptions;
 use Docker\Stream\EventStream;
-use Jane\OpenApiRuntime\Client\Client;
-use Jane\OpenApiRuntime\Client\Exception\InvalidFetchModeException;
-use Psr\Http\Message\ResponseInterface;
+use Nyholm\Psr7\Stream;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class SystemEvents extends BaseEndpoint implements ProvideAmpArtaxClientOptions, AmpArtaxStreamEndpoint
+class SystemEvents extends BaseEndpoint
 {
-    use AmpArtaxStreamEndpointTrait;
-
-    public function getAmpArtaxClientOptions(): array
+    protected function transformResponseBody(string $body, int $status, SerializerInterface $serializer, ?string $contentType = null)
     {
-        return [ArtaxClient::OP_TRANSFER_TIMEOUT => 0];
-    }
+        if (200 === $status) {
+            $stream = Stream::create($body);
+            $stream->rewind();
 
-    public function parsePSR7Response(ResponseInterface $response, SerializerInterface $serializer, string $fetchMode = Client::FETCH_OBJECT)
-    {
-        if (Client::FETCH_OBJECT === $fetchMode) {
-            if (200 === $response->getStatusCode()) {
-                return new EventStream($response->getBody(), $serializer);
-            }
-
-            return $this->transformResponseBody((string) $response->getBody(), $response->getStatusCode(), $serializer);
+            return new EventStream($stream, $serializer);
         }
 
-        if (Client::FETCH_RESPONSE === $fetchMode) {
-            return $response;
-        }
-
-        throw new InvalidFetchModeException(\sprintf('Fetch mode %s is not supported', $fetchMode));
+        return parent::transformResponseBody($body, $status, $serializer, $contentType);
     }
 }

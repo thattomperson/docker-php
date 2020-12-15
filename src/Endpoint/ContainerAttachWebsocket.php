@@ -6,39 +6,36 @@ namespace Docker\Endpoint;
 
 use Docker\API\Endpoint\ContainerAttachWebsocket as BaseEndpoint;
 use Docker\Stream\AttachWebsocketStream;
-use Jane\OpenApiRuntime\Client\Client;
-use Jane\OpenApiRuntime\Client\Exception\InvalidFetchModeException;
-use Psr\Http\Message\ResponseInterface;
+use Nyholm\Psr7\Stream;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ContainerAttachWebsocket extends BaseEndpoint
 {
     public function getExtraHeaders(): array
     {
-        return \array_merge(parent::getExtraHeaders(), [
-            'Host' => 'localhost',
-            'Origin' => 'php://docker-php',
-            'Upgrade' => 'websocket',
-            'Connection' => 'Upgrade',
-            'Sec-WebSocket-Version' => '13',
-            'Sec-WebSocket-Key' => \base64_encode(\uniqid()),
-        ]);
+        return \array_merge(
+            parent::getExtraHeaders(),
+            [
+                'Host' => 'localhost',
+                'Origin' => 'php://docker-php',
+                'Upgrade' => 'websocket',
+                'Connection' => 'Upgrade',
+                'Sec-WebSocket-Version' => '13',
+                'Sec-WebSocket-Key' => \base64_encode(\uniqid()),
+            ]
+        );
     }
 
-    public function parsePSR7Response(ResponseInterface $response, SerializerInterface $serializer, string $fetchMode = Client::FETCH_OBJECT)
+    protected function transformResponseBody(string $body, int $status, SerializerInterface $serializer, ?string $contentType = null)
     {
-        if (Client::FETCH_OBJECT === $fetchMode) {
-            if (101 === $response->getStatusCode()) {
-                return new AttachWebsocketStream($response->getBody());
-            }
+        if (200 === $status && DockerRawStream::HEADER === $contentType) {
+            $streamFactory = StreamFactoryDiscovery::find();
+            $stream = $streamFactory->createStream($jsonStream);
+            $stream->rewind();
 
-            return $this->transformResponseBody((string) $response->getBody(), $response->getStatusCode(), $serializer);
+            return new AttachWebsocketStream($stream);
         }
 
-        if (Client::FETCH_RESPONSE === $fetchMode) {
-            return $response;
-        }
-
-        throw new InvalidFetchModeException(\sprintf('Fetch mode %s is not supported', $fetchMode));
+        return parent::transformResponseBody($body, $status, $serializer, $contentType);
     }
 }

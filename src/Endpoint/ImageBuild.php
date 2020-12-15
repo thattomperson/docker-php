@@ -7,38 +7,31 @@ namespace Docker\Endpoint;
 use Docker\API\Endpoint\ImageBuild as BaseEndpoint;
 use Docker\Stream\BuildStream;
 use Docker\Stream\TarStream;
-use Jane\OpenApiRuntime\Client\Client;
-use Jane\OpenApiRuntime\Client\Exception\InvalidFetchModeException;
-use Psr\Http\Message\ResponseInterface;
+use Nyholm\Psr7\Stream;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ImageBuild extends BaseEndpoint
 {
-    public function getBody(\Symfony\Component\Serializer\SerializerInterface $serializer, \Http\Message\StreamFactory $streamFactory = null): array
+    public function getBody(SerializerInterface $serializer, $streamFactory = null): array
     {
         $body = $this->body;
 
         if (\is_resource($body)) {
-            $body = new TarStream($body);
+            $body = new TarStream(Stream::create($body));
         }
 
-        return [[], $body];
+        return [['Content-Type' => ['application/octet-stream']], $body];
     }
 
-    public function parsePSR7Response(ResponseInterface $response, SerializerInterface $serializer, string $fetchMode = Client::FETCH_OBJECT)
+    protected function transformResponseBody(string $body, int $status, SerializerInterface $serializer, ?string $contentType = null)
     {
-        if (Client::FETCH_OBJECT === $fetchMode) {
-            if (200 === $response->getStatusCode()) {
-                return new BuildStream($response->getBody(), $serializer);
-            }
+        if (200 === $status) {
+            $stream = Stream::create($body);
+            $stream->rewind();
 
-            return $this->transformResponseBody((string) $response->getBody(), $response->getStatusCode(), $serializer);
+            return new BuildStream($stream, $serializer);
         }
 
-        if (Client::FETCH_RESPONSE === $fetchMode) {
-            return $response;
-        }
-
-        throw new InvalidFetchModeException(\sprintf('Fetch mode %s is not supported', $fetchMode));
+        return parent::transformResponseBody($body, $status, $serializer, $contentType);
     }
 }

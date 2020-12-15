@@ -62,10 +62,9 @@ class ContextBuilderTest extends TestCase
 
         $context = $contextBuilder->getContext();
         $filename = \preg_replace(<<<DOCKERFILE
-#FROM base
-ADD (.+?) /foo#
-DOCKERFILE
-            , '$1', $context->getDockerfileContent());
+            #FROM base
+            ADD (.+?) /foo#
+            DOCKERFILE, '$1', $context->getDockerfileContent());
 
         $this->assertStringEqualsFile($context->getDirectory().'/'.$filename, 'random content');
     }
@@ -80,10 +79,9 @@ DOCKERFILE
 
         $context = $contextBuilder->getContext();
         $filename = \preg_replace(<<<DOCKERFILE
-#FROM base
-ADD (.+?) /foo#
-DOCKERFILE
-            , '$1', $context->getDockerfileContent());
+            #FROM base
+            ADD (.+?) /foo#
+            DOCKERFILE, '$1', $context->getDockerfileContent());
         $this->assertStringEqualsFile($context->getDirectory().'/'.$filename, 'test123');
     }
 
@@ -97,10 +95,9 @@ DOCKERFILE
 
         $context = $contextBuilder->getContext();
         $filename = \preg_replace(<<<DOCKERFILE
-#FROM base
-ADD (.+?) /foo#
-DOCKERFILE
-            , '$1', $context->getDockerfileContent());
+            #FROM base
+            ADD (.+?) /foo#
+            DOCKERFILE, '$1', $context->getDockerfileContent());
         $this->assertStringEqualsFile($context->getDirectory().'/'.$filename, 'abc');
     }
 
@@ -116,10 +113,9 @@ DOCKERFILE
 
         $context = $contextBuilder->getContext();
         $filename = \preg_replace(<<<DOCKERFILE
-#FROM base
-ADD (.+?) /foo#
-DOCKERFILE
-            , '$1', $context->getDockerfileContent());
+            #FROM base
+            ADD (.+?) /foo#
+            DOCKERFILE, '$1', $context->getDockerfileContent());
         $this->assertStringEqualsFile($context->getDirectory().'/'.$filename.'/test', 'abc');
     }
 
@@ -130,11 +126,10 @@ DOCKERFILE
 
         $context = $contextBuilder->getContext();
 
-        $this->assertRegExp(<<<DOCKERFILE
-#FROM base
-ADD .+? /foo#
-DOCKERFILE
-            , $context->getDockerfileContent()
+        $this->assertMatchesRegularExpression(<<<DOCKERFILE
+            #FROM base
+            ADD .+? /foo#
+            DOCKERFILE, $context->getDockerfileContent()
         );
     }
 
@@ -146,9 +141,9 @@ DOCKERFILE
         $context = $contextBuilder->getContext();
 
         $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
-FROM base
-RUN foo command
-DOCKERFILE
+            FROM base
+            RUN foo command
+            DOCKERFILE
         );
     }
 
@@ -160,9 +155,9 @@ DOCKERFILE
         $context = $contextBuilder->getContext();
 
         $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
-FROM base
-ENV foo bar
-DOCKERFILE
+            FROM base
+            ENV foo bar
+            DOCKERFILE
         );
     }
 
@@ -174,9 +169,9 @@ DOCKERFILE
         $context = $contextBuilder->getContext();
 
         $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
-FROM base
-COPY /foo /bar
-DOCKERFILE
+            FROM base
+            COPY /foo /bar
+            DOCKERFILE
         );
     }
 
@@ -188,9 +183,9 @@ DOCKERFILE
         $context = $contextBuilder->getContext();
 
         $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
-FROM base
-WORKDIR /foo
-DOCKERFILE
+            FROM base
+            WORKDIR /foo
+            DOCKERFILE
         );
     }
 
@@ -202,9 +197,9 @@ DOCKERFILE
         $context = $contextBuilder->getContext();
 
         $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
-FROM base
-EXPOSE 80
-DOCKERFILE
+            FROM base
+            EXPOSE 80
+            DOCKERFILE
         );
     }
 
@@ -242,7 +237,7 @@ DOCKERFILE
 
         $contextBuilder->command('changed');
         $content = $contextBuilder->getContext()->getDockerfileContent();
-        $this->assertNotContains('CMD test123', $content);
+        $this->assertStringNotContainsString('CMD test123', $content);
         $this->assertStringEndsWith("\nCMD changed", $content);
     }
 
@@ -256,7 +251,7 @@ DOCKERFILE
 
         $contextBuilder->entrypoint('changed');
         $content = $contextBuilder->getContext()->getDockerfileContent();
-        $this->assertNotContains('ENTRYPOINT test123', $content);
+        $this->assertStringNotContainsString('ENTRYPOINT test123', $content);
         $this->assertStringEndsWith("\nENTRYPOINT changed", $content);
     }
 
@@ -266,7 +261,7 @@ DOCKERFILE
         $contextBuilder->setFormat(Context::FORMAT_TAR);
         $context = $contextBuilder->getContext();
         $content = $context->read();
-        $this->assertInternalType('string', $content);
+        $this->assertIsString($content);
         $this->assertSame($context->toTar(), $content);
     }
 
@@ -288,10 +283,9 @@ DOCKERFILE
         $context = $contextBuilder->getContext();
 
         $filename = \preg_replace(<<<DOCKERFILE
-#FROM base
-ADD (.+?) /foo#
-DOCKERFILE
-            , '$1', $context->getDockerfileContent());
+            #FROM base
+            ADD (.+?) /foo#
+            DOCKERFILE, '$1', $context->getDockerfileContent());
         \unlink($file);
         $context->setCleanup(false);
         $this->assertStringEqualsFile($context->getDirectory().'/'.$filename.'/test-symlink', 'abc');

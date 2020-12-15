@@ -19,8 +19,6 @@ abstract class CallbackStream
 
     /**
      * Called when there is a new frame from the stream.
-     *
-     * @param callable $onNewFrame
      */
     public function onFrame(callable $onNewFrame): void
     {

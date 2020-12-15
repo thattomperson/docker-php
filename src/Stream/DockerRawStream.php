@@ -29,8 +29,6 @@ class DockerRawStream
 
     /**
      * Add a callable to read stdin.
-     *
-     * @param callable $callback
      */
     public function onStdin(callable $callback): void
     {
@@ -39,8 +37,6 @@ class DockerRawStream
 
     /**
      * Add a callable to read stdout.
-     *
-     * @param callable $callback
      */
     public function onStdout(callable $callback): void
     {
@@ -49,8 +45,6 @@ class DockerRawStream
 
     /**
      * Add a callable to read stderr.
-     *
-     * @param callable $callback
      */
     public function onStderr(callable $callback): void
     {

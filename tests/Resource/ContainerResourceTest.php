@@ -35,13 +35,16 @@ class ContainerResourceTest extends TestCase
         $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['echo', '-n', 'output']);
         $containerConfig->setAttachStdout(true);
-        $containerConfig->setLabels(new \ArrayObject(['docker-php-test' => 'true']));
+        $containerConfig->setLabels(['docker-php-test' => 'true']);
 
         $containerCreateResult = $this->getManager()->containerCreate($containerConfig);
-        $dockerRawStream = $this->getManager()->containerAttach($containerCreateResult->getId(), [
-            'stream' => true,
-            'stdout' => true,
-        ]);
+        $dockerRawStream = $this->getManager()->containerAttach(
+            $containerCreateResult->getId(),
+            [
+                'stream' => true,
+                'stdout' => true,
+            ]
+        );
 
         $stdoutFull = '';
         $dockerRawStream->onStdout(function ($stdout) use (&$stdoutFull): void {
@@ -69,12 +72,15 @@ class ContainerResourceTest extends TestCase
         $containerConfig->setLabels(new \ArrayObject(['docker-php-test' => 'true']));
 
         $containerCreateResult = $this->getManager()->containerCreate($containerConfig);
-        $webSocketStream = $this->getManager()->containerAttachWebsocket($containerCreateResult->getId(), [
-            'stream' => true,
-            'stdout' => true,
-            'stderr' => true,
-            'stdin' => true,
-        ]);
+        $webSocketStream = $this->getManager()->containerAttachWebsocket(
+            $containerCreateResult->getId(),
+            [
+                'stream' => true,
+                'stdout' => true,
+                'stderr' => true,
+                'stdin' => true,
+            ]
+        );
 
         $this->getManager()->containerStart($containerCreateResult->getId());
 
@@ -106,17 +112,21 @@ class ContainerResourceTest extends TestCase
         $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['echo', '-n', 'output']);
         $containerConfig->setAttachStdout(true);
-        $containerConfig->setLabels(new \ArrayObject(['docker-php-test' => 'true']));
+        $containerConfig->setLabels(['docker-php-test' => 'true']);
 
         $containerCreateResult = $this->getManager()->containerCreate($containerConfig);
 
         $this->getManager()->containerStart($containerCreateResult->getId());
         $this->getManager()->containerWait($containerCreateResult->getId());
 
-        $logsStream = $this->getManager()->containerLogs($containerCreateResult->getId(), [
-            'stdout' => true,
-            'stderr' => true,
-        ], Docker::FETCH_OBJECT);
+        $logsStream = $this->getManager()->containerLogs(
+            $containerCreateResult->getId(),
+            [
+                'stdout' => true,
+                'stderr' => true,
+            ],
+            Docker::FETCH_OBJECT
+        );
 
         self::assertInstanceOf(DockerRawStream::class, $logsStream);
     }
