@@ -29,8 +29,7 @@ class ContainerAttachWebsocket extends BaseEndpoint
     protected function transformResponseBody(string $body, int $status, SerializerInterface $serializer, ?string $contentType = null)
     {
         if (200 === $status && DockerRawStream::HEADER === $contentType) {
-            $streamFactory = StreamFactoryDiscovery::find();
-            $stream = $streamFactory->createStream($jsonStream);
+            $stream = Stream::create($body);
             $stream->rewind();
 
             return new AttachWebsocketStream($stream);

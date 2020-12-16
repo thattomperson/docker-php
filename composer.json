@@ -30,12 +30,11 @@
         "php-http/httplug-bundle": "For integration with Symfony"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5",
-        "friendsofphp/php-cs-fixer": "^2.17"
+        "friendsofphp/php-cs-fixer": "^2.17",
+        "phpunit/phpunit": "^9.5"
     },
     "conflict": {
-        "amphp/socket": "<0.10.5",
-        "amphp/artax": "<3.0"
+        "docker-php/docker-php": "*"
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
@@ -45,9 +44,9 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.x-dev"
+            "dev-master": "3.x-dev"
         }
     },
-    "prefer-stable": true,
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
