@@ -8,9 +8,6 @@ The test suite currently passes against Docker Remote API v1.25 to v1.36.
 [![Documentation Status](https://readthedocs.org/projects/docker-php/badge/?version=latest)](http://docker-php.readthedocs.org/en/latest/)
 [![Latest Version](https://img.shields.io/github/release/beluga-php/docker-php.svg?style=flat-square)](https://github.com/beluga-php/docker-php/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-[![Build Status](https://img.shields.io/travis/beluga-php/docker-php.svg?branch=master&style=flat-square)](https://travis-ci.org/beluga-php/docker-php)
-[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/beluga-php/docker-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/beluga-php/docker-php)
-[![Quality Score](https://img.shields.io/scrutinizer/g/beluga-php/docker-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/beluga-php/docker-php)
 [![Total Downloads](https://img.shields.io/packagist/dt/beluga-php/docker-php.svg?style=flat-square)](https://packagist.org/packages/beluga-php/docker-php)
 
 ## Installation
@@ -23,11 +20,11 @@ composer require beluga-php/docker-php
 
 ## Docker API Version
 
-By default it will use the last version of docker api available, if you want to fix a version (like 1.25) you can add this
+By default it will use the last version of docker api available, if you want to fix a version (like 1.41) you can add this
 requirement to composer:
 
 ```bash
-composer require "beluga-php/docker-php-api:4.1.25.*"
+composer require "beluga-php/docker-php-api:6.1.41.*"
 ```
 
 ## Usage
@@ -56,7 +53,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 This README heavily inspired by [willdurand/Negotiation](https://github.com/willdurand/Negotiation) by @willdurand. This guy is pretty awesome.
 
-This library is a fork of the original [docker-php](https://github.com/docker-php/docker-php), created by [Geoffrey Bachelet](https://github.com/ubermuda) and [Joel Wurtz](https://github.com/joelwurtz).
+This library is a fork of the original [docker-php/docker-php](https://github.com/docker-php/docker-php), created by [Geoffrey Bachelet](https://github.com/ubermuda) and [Joel Wurtz](https://github.com/joelwurtz).
 
 ## License
 
