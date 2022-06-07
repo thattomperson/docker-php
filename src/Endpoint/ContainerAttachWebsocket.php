@@ -6,6 +6,7 @@ namespace Docker\Endpoint;
 
 use Docker\API\Endpoint\ContainerAttachWebsocket as BaseEndpoint;
 use Docker\Stream\AttachWebsocketStream;
+use Docker\Stream\DockerRawStream;
 use Nyholm\Psr7\Stream;
 use Symfony\Component\Serializer\SerializerInterface;
 
