@@ -8,11 +8,11 @@ $finder = \PhpCsFixer\Finder::create()
     ->notPath('/fixtures/')
 ;
 
-return \PhpCsFixer\Config::create()
+$config = new \PhpCsFixer\Config();
+return $config
     ->setRules([
         '@Symfony'                    => true,
         '@Symfony:risky'              => true,
-        '@PHP56Migration'             => true,
         '@PHP56Migration:risky'       => true,
         '@PHP70Migration'             => true,
         '@PHP70Migration:risky'       => true,
