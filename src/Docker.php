@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Docker;
 
 use Docker\API\Client;
+use Docker\API\Model\AuthConfig;
 use Docker\API\Model\ExecIdStartPostBody;
 use Docker\Endpoint\ContainerAttach;
 use Docker\Endpoint\ContainerAttachWebsocket;
@@ -47,7 +48,7 @@ class Docker extends Client
     /**
      * {@inheritdoc}
      */
-    public function execStart(string $id, ExecIdStartPostBody $execStartConfig, string $fetch = self::FETCH_OBJECT)
+    public function execStart(string $id, ?ExecIdStartPostBody $execStartConfig = null, string $fetch = self::FETCH_OBJECT)
     {
         return $this->executeEndpoint(new ExecStart($id, $execStartConfig), $fetch);
     }
@@ -55,7 +56,7 @@ class Docker extends Client
     /**
      * {@inheritdoc}
      */
-    public function imageBuild($inputStream, array $queryParameters = [], array $headerParameters = [], string $fetch = self::FETCH_OBJECT)
+    public function imageBuild($inputStream = null, array $queryParameters = [], array $headerParameters = [], string $fetch = self::FETCH_OBJECT)
     {
         return $this->executeEndpoint(new ImageBuild($inputStream, $queryParameters, $headerParameters), $fetch);
     }
@@ -63,7 +64,7 @@ class Docker extends Client
     /**
      * {@inheritdoc}
      */
-    public function imageCreate(string $inputImage, array $queryParameters = [], array $headerParameters = [], string $fetch = self::FETCH_OBJECT)
+    public function imageCreate(?string $inputImage = null, array $queryParameters = [], array $headerParameters = [], string $fetch = self::FETCH_OBJECT)
     {
         return $this->executeEndpoint(new ImageCreate($inputImage, $queryParameters, $headerParameters), $fetch);
     }
@@ -88,12 +89,12 @@ class Docker extends Client
         return $this->executeEndpoint(new SystemEvents($queryParameters), $fetch);
     }
 
-    public static function create($httpClient = null, array $additionalPlugins = [])
+    public static function create($httpClient = null, array $additionalPlugins = [], array $additionalNormalizers = [])
     {
         if (null === $httpClient) {
             $httpClient = DockerClientFactory::createFromEnv();
         }
 
-        return parent::create($httpClient, $additionalPlugins);
+        return parent::create($httpClient, $additionalPlugins, $additionalNormalizers);
     }
 }
