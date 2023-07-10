@@ -8,6 +8,7 @@ use Docker\API\Endpoint\ImageBuild as BaseEndpoint;
 use Docker\Stream\BuildStream;
 use Docker\Stream\TarStream;
 use Nyholm\Psr7\Stream;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ImageBuild extends BaseEndpoint
@@ -23,15 +24,12 @@ class ImageBuild extends BaseEndpoint
         return [['Content-Type' => ['application/octet-stream']], $body];
     }
 
-    protected function transformResponseBody(string $body, int $status, SerializerInterface $serializer, ?string $contentType = null)
+    protected function transformResponseBody(ResponseInterface $response, SerializerInterface $serializer, ?string $contentType = null)
     {
-        if (200 === $status) {
-            $stream = Stream::create($body);
-            $stream->rewind();
-
-            return new BuildStream($stream, $serializer);
+        if (200 === $response->getStatusCode()) {
+            return new BuildStream($response->getBody(), $serializer);
         }
 
-        return parent::transformResponseBody($body, $status, $serializer, $contentType);
+        return parent::transformResponseBody($response, $serializer, $contentType);
     }
 }
