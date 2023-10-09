@@ -36,7 +36,7 @@ class TarStream implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         return null;
     }
