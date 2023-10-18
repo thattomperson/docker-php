@@ -12,7 +12,7 @@ class DockerClientFactoryTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        \putenv('DOCKER_TLS_VERIFY');
+        putenv('DOCKER_TLS_VERIFY');
     }
 
     public function testStaticConstructor(): void
@@ -25,24 +25,24 @@ class DockerClientFactoryTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Connection to docker has been set to use TLS, but no PATH is defined for certificate in DOCKER_CERT_PATH docker environment variable');
 
-        \putenv('DOCKER_TLS_VERIFY=1');
+        putenv('DOCKER_TLS_VERIFY=1');
         DockerClientFactory::createFromEnv();
     }
 
     public function testCreateCustomCa(): void
     {
-        \putenv('DOCKER_TLS_VERIFY=1');
-        \putenv('DOCKER_CERT_PATH=/tmp');
+        putenv('DOCKER_TLS_VERIFY=1');
+        putenv('DOCKER_CERT_PATH=/tmp');
 
-        $count = \count(\get_resources('stream-context'));
+        $count = \count(get_resources('stream-context'));
         $client = DockerClientFactory::createFromEnv();
         $this->assertInstanceOf(ClientInterface::class, $client);
 
-        $contexts = \get_resources('stream-context');
+        $contexts = get_resources('stream-context');
         $this->assertCount($count + 1, $contexts);
 
         // Get the last stream context.
-        $context = \stream_context_get_options(\end($contexts));
+        $context = stream_context_get_options(end($contexts));
         $this->assertSame('/tmp/ca.pem', $context['ssl']['cafile']);
         $this->assertSame('/tmp/cert.pem', $context['ssl']['local_cert']);
         $this->assertSame('/tmp/key.pem', $context['ssl']['local_pk']);
@@ -50,19 +50,19 @@ class DockerClientFactoryTest extends TestCase
 
     public function testCreateCustomPeerName(): void
     {
-        \putenv('DOCKER_TLS_VERIFY=1');
-        \putenv('DOCKER_CERT_PATH=/abc');
-        \putenv('DOCKER_PEER_NAME=test');
+        putenv('DOCKER_TLS_VERIFY=1');
+        putenv('DOCKER_CERT_PATH=/abc');
+        putenv('DOCKER_PEER_NAME=test');
 
-        $count = \count(\get_resources('stream-context'));
+        $count = \count(get_resources('stream-context'));
         $client = DockerClientFactory::createFromEnv();
         $this->assertInstanceOf(ClientInterface::class, $client);
 
-        $contexts = \get_resources('stream-context');
+        $contexts = get_resources('stream-context');
         $this->assertCount($count + 1, $contexts);
 
         // Get the last stream context.
-        $context = \stream_context_get_options(\end($contexts));
+        $context = stream_context_get_options(end($contexts));
         $this->assertSame('/abc/ca.pem', $context['ssl']['cafile']);
         $this->assertSame('/abc/cert.pem', $context['ssl']['local_cert']);
         $this->assertSame('/abc/key.pem', $context['ssl']['local_pk']);

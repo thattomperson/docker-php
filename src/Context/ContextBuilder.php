@@ -255,7 +255,7 @@ class ContextBuilder
      */
     public function getContext()
     {
-        $directory = \sys_get_temp_dir().'/ctb-'.\microtime();
+        $directory = sys_get_temp_dir().'/ctb-'.microtime();
         $this->fs->mkdir($directory);
         $this->write($directory);
 
@@ -325,7 +325,7 @@ class ContextBuilder
             $dockerfile[] = 'CMD '.$this->command;
         }
 
-        $this->fs->dumpFile($directory.\DIRECTORY_SEPARATOR.'Dockerfile', \implode(PHP_EOL, $dockerfile));
+        $this->fs->dumpFile($directory.\DIRECTORY_SEPARATOR.'Dockerfile', implode(\PHP_EOL, $dockerfile));
     }
 
     /**
@@ -338,12 +338,12 @@ class ContextBuilder
      */
     private function getFile($directory, $content)
     {
-        $hash = \md5($content);
+        $hash = md5($content);
 
         if (!\array_key_exists($hash, $this->files)) {
-            $file = \tempnam($directory, '');
+            $file = tempnam($directory, '');
             $this->fs->dumpFile($file, $content);
-            $this->files[$hash] = \basename($file);
+            $this->files[$hash] = basename($file);
         }
 
         return $this->files[$hash];
@@ -359,14 +359,14 @@ class ContextBuilder
      */
     private function getFileFromStream($directory, $stream)
     {
-        $file = \tempnam($directory, '');
-        $target = \fopen($file, 'w');
-        if (0 === \stream_copy_to_stream($stream, $target)) {
+        $file = tempnam($directory, '');
+        $target = fopen($file, 'w');
+        if (0 === stream_copy_to_stream($stream, $target)) {
             throw new \RuntimeException('Failed to write stream to file');
         }
-        \fclose($target);
+        fclose($target);
 
-        return \basename($file);
+        return basename($file);
     }
 
     /**
@@ -379,10 +379,10 @@ class ContextBuilder
      */
     private function getFileFromDisk($directory, $source)
     {
-        $hash = 'DISK-'.\md5(\realpath($source));
+        $hash = 'DISK-'.md5(realpath($source));
         if (!\array_key_exists($hash, $this->files)) {
             // Check if source is a directory or a file.
-            if (\is_dir($source)) {
+            if (is_dir($source)) {
                 $this->fs->mirror($source, $directory.'/'.$hash, null, ['copy_on_windows' => true]);
             } else {
                 $this->fs->copy($source, $directory.'/'.$hash);

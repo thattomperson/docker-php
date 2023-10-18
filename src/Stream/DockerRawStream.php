@@ -62,7 +62,7 @@ class DockerRawStream
             return;
         }
 
-        $decoded = \unpack('C1type/C3/N1size', $header);
+        $decoded = unpack('C1type/C3/N1size', $header);
         $output = $this->forceRead($decoded['size']);
         $callbackList = [];
 
@@ -85,8 +85,6 @@ class DockerRawStream
 
     /**
      * Force to have something of the expected size (block).
-     *
-     * @param $length
      *
      * @return string
      */

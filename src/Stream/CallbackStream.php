@@ -27,8 +27,6 @@ abstract class CallbackStream
 
     /**
      * Read a frame in the stream.
-     *
-     * @return mixed
      */
     abstract protected function readFrame();
 

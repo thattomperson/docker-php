@@ -43,13 +43,13 @@ class ContextTest extends TestCase
         $this->expectException(\Symfony\Component\Process\Exception\ProcessFailedException::class);
 
         $directory = __DIR__.\DIRECTORY_SEPARATOR.'context-test';
-        $path = \getenv('PATH');
-        \putenv('PATH=/');
+        $path = getenv('PATH');
+        putenv('PATH=/');
         $context = new Context($directory);
         try {
             $context->toTar();
         } finally {
-            \putenv("PATH=$path");
+            putenv("PATH=$path");
         }
     }
 

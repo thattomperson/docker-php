@@ -33,9 +33,6 @@ class TarStream implements StreamInterface
         return $this->stream->detach();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSize(): ?int
     {
         return null;
@@ -56,7 +53,7 @@ class TarStream implements StreamInterface
         return $this->stream->isSeekable();
     }
 
-    public function seek($offset, $whence = SEEK_SET): void
+    public function seek($offset, $whence = \SEEK_SET): void
     {
         $this->stream->seek($offset, $whence);
     }

@@ -22,9 +22,6 @@ abstract class MultiJsonStream extends CallbackStream
         $this->serializer = $serializer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function readFrame()
     {
         $jsonFrameEnd = false;

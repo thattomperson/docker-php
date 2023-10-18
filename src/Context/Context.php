@@ -86,7 +86,7 @@ class Context implements ContextInterface
      */
     public function getDockerfileContent()
     {
-        return \file_get_contents($this->directory.\DIRECTORY_SEPARATOR.'Dockerfile');
+        return file_get_contents($this->directory.\DIRECTORY_SEPARATOR.'Dockerfile');
     }
 
     /**
@@ -132,7 +132,7 @@ class Context implements ContextInterface
     public function toStream()
     {
         if (!\is_resource($this->process)) {
-            $this->process = \proc_open('/usr/bin/env tar -c .', [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']], $pipes, $this->directory);
+            $this->process = proc_open('/usr/bin/env tar -c .', [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']], $pipes, $this->directory);
             $this->stream = $pipes[1];
         }
 
@@ -142,11 +142,11 @@ class Context implements ContextInterface
     public function __destruct()
     {
         if (\is_resource($this->stream)) {
-            \fclose($this->stream);
+            fclose($this->stream);
         }
 
         if (\is_resource($this->process)) {
-            \proc_close($this->process);
+            proc_close($this->process);
         }
 
         if ($this->cleanup) {

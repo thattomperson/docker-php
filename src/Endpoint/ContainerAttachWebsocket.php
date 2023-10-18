@@ -14,7 +14,7 @@ class ContainerAttachWebsocket extends BaseEndpoint
 {
     public function getExtraHeaders(): array
     {
-        return \array_merge(
+        return array_merge(
             parent::getExtraHeaders(),
             [
                 'Host' => 'localhost',
@@ -22,12 +22,12 @@ class ContainerAttachWebsocket extends BaseEndpoint
                 'Upgrade' => 'websocket',
                 'Connection' => 'Upgrade',
                 'Sec-WebSocket-Version' => '13',
-                'Sec-WebSocket-Key' => \base64_encode(\uniqid()),
+                'Sec-WebSocket-Key' => base64_encode(uniqid()),
             ]
         );
     }
 
-    protected function transformResponseBody(ResponseInterface $response, SerializerInterface $serializer, ?string $contentType = null)
+    protected function transformResponseBody(ResponseInterface $response, SerializerInterface $serializer, string $contentType = null)
     {
         if (200 === $response->getStatusCode() && DockerRawStream::HEADER === $contentType) {
             return new AttachWebsocketStream($response->getBody());

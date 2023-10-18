@@ -31,8 +31,6 @@ class MultiJsonStreamTest extends TestCase
     }
 
     /**
-     * @param $jsonStream
-     * @param $jsonParts
      * @dataProvider jsonStreamDataProvider
      */
     public function testReadJsonEscapedDoubleQuote(string $jsonStream, array $jsonParts): void
@@ -46,7 +44,7 @@ class MultiJsonStreamTest extends TestCase
         $serializer
             ->expects($this->exactly(\count($jsonParts)))
             ->method('deserialize')
-                ->withConsecutive(...\array_map(fn ($part) => [$part, BuildInfo::class, 'json', []], $jsonParts))
+                ->withConsecutive(...array_map(fn ($part) => [$part, BuildInfo::class, 'json', []], $jsonParts))
         ;
 
         $stub = $this->getMockForAbstractClass(MultiJsonStream::class, [$stream, $serializer]);

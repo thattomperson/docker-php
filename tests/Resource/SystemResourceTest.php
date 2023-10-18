@@ -20,8 +20,8 @@ class SystemResourceTest extends TestCase
     public function testGetEvents(): void
     {
         $stream = $this->getManager()->systemEvents([
-            'since' => (string) (\time() - 1),
-            'until' => (string) (\time() + 4),
+            'since' => (string) (time() - 1),
+            'until' => (string) (time() + 4),
         ]);
 
         $lastEvent = null;

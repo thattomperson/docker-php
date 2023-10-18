@@ -61,7 +61,7 @@ class ContextBuilderTest extends TestCase
         $contextBuilder->add('/foo', 'random content');
 
         $context = $contextBuilder->getContext();
-        $filename = \preg_replace(<<<DOCKERFILE
+        $filename = preg_replace(<<<DOCKERFILE
             #FROM base
             ADD (.+?) /foo#
             DOCKERFILE, '$1', $context->getDockerfileContent());
@@ -72,13 +72,13 @@ class ContextBuilderTest extends TestCase
     public function testWriteTmpFileFromStream(): void
     {
         $contextBuilder = new ContextBuilder();
-        $stream = \fopen('php://temp', 'r+');
-        $this->assertSame(7, \fwrite($stream, 'test123'));
-        \rewind($stream);
+        $stream = fopen('php://temp', 'r+');
+        $this->assertSame(7, fwrite($stream, 'test123'));
+        rewind($stream);
         $contextBuilder->addStream('/foo', $stream);
 
         $context = $contextBuilder->getContext();
-        $filename = \preg_replace(<<<DOCKERFILE
+        $filename = preg_replace(<<<DOCKERFILE
             #FROM base
             ADD (.+?) /foo#
             DOCKERFILE, '$1', $context->getDockerfileContent());
@@ -88,13 +88,13 @@ class ContextBuilderTest extends TestCase
     public function testWriteTmpFileFromDisk(): void
     {
         $contextBuilder = new ContextBuilder();
-        $file = \tempnam('', '');
-        \file_put_contents($file, 'abc');
+        $file = tempnam('', '');
+        file_put_contents($file, 'abc');
         $this->assertStringEqualsFile($file, 'abc');
         $contextBuilder->addFile('/foo', $file);
 
         $context = $contextBuilder->getContext();
-        $filename = \preg_replace(<<<DOCKERFILE
+        $filename = preg_replace(<<<DOCKERFILE
             #FROM base
             ADD (.+?) /foo#
             DOCKERFILE, '$1', $context->getDockerfileContent());
@@ -104,15 +104,15 @@ class ContextBuilderTest extends TestCase
     public function testWriteTmpDirFromDisk(): void
     {
         $contextBuilder = new ContextBuilder();
-        $dir = \tempnam(\sys_get_temp_dir(), '');
-        \unlink($dir);
-        \mkdir($dir);
-        \file_put_contents($dir.'/test', 'abc');
+        $dir = tempnam(sys_get_temp_dir(), '');
+        unlink($dir);
+        mkdir($dir);
+        file_put_contents($dir.'/test', 'abc');
         $this->assertStringEqualsFile($dir.'/test', 'abc');
         $contextBuilder->addFile('/foo', $dir);
 
         $context = $contextBuilder->getContext();
-        $filename = \preg_replace(<<<DOCKERFILE
+        $filename = preg_replace(<<<DOCKERFILE
             #FROM base
             ADD (.+?) /foo#
             DOCKERFILE, '$1', $context->getDockerfileContent());
@@ -126,10 +126,12 @@ class ContextBuilderTest extends TestCase
 
         $context = $contextBuilder->getContext();
 
-        $this->assertMatchesRegularExpression(<<<DOCKERFILE
-            #FROM base
-            ADD .+? /foo#
-            DOCKERFILE, $context->getDockerfileContent()
+        $this->assertMatchesRegularExpression(
+            <<<DOCKERFILE
+                #FROM base
+                ADD .+? /foo#
+                DOCKERFILE,
+            $context->getDockerfileContent()
         );
     }
 
@@ -140,10 +142,12 @@ class ContextBuilderTest extends TestCase
 
         $context = $contextBuilder->getContext();
 
-        $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
-            FROM base
-            RUN foo command
-            DOCKERFILE
+        $this->assertStringEqualsFile(
+            $context->getDirectory().'/Dockerfile',
+            <<<DOCKERFILE
+                FROM base
+                RUN foo command
+                DOCKERFILE
         );
     }
 
@@ -154,10 +158,12 @@ class ContextBuilderTest extends TestCase
 
         $context = $contextBuilder->getContext();
 
-        $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
-            FROM base
-            ENV foo bar
-            DOCKERFILE
+        $this->assertStringEqualsFile(
+            $context->getDirectory().'/Dockerfile',
+            <<<DOCKERFILE
+                FROM base
+                ENV foo bar
+                DOCKERFILE
         );
     }
 
@@ -168,10 +174,12 @@ class ContextBuilderTest extends TestCase
 
         $context = $contextBuilder->getContext();
 
-        $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
-            FROM base
-            COPY /foo /bar
-            DOCKERFILE
+        $this->assertStringEqualsFile(
+            $context->getDirectory().'/Dockerfile',
+            <<<DOCKERFILE
+                FROM base
+                COPY /foo /bar
+                DOCKERFILE
         );
     }
 
@@ -182,10 +190,12 @@ class ContextBuilderTest extends TestCase
 
         $context = $contextBuilder->getContext();
 
-        $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
-            FROM base
-            WORKDIR /foo
-            DOCKERFILE
+        $this->assertStringEqualsFile(
+            $context->getDirectory().'/Dockerfile',
+            <<<DOCKERFILE
+                FROM base
+                WORKDIR /foo
+                DOCKERFILE
         );
     }
 
@@ -196,10 +206,12 @@ class ContextBuilderTest extends TestCase
 
         $context = $contextBuilder->getContext();
 
-        $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
-            FROM base
-            EXPOSE 80
-            DOCKERFILE
+        $this->assertStringEqualsFile(
+            $context->getDirectory().'/Dockerfile',
+            <<<DOCKERFILE
+                FROM base
+                EXPOSE 80
+                DOCKERFILE
         );
     }
 
@@ -268,25 +280,25 @@ class ContextBuilderTest extends TestCase
     public function testTraverseSymlinks(): void
     {
         $contextBuilder = new ContextBuilder();
-        $dir = \tempnam('', '');
-        \unlink($dir);
-        \mkdir($dir);
+        $dir = tempnam('', '');
+        unlink($dir);
+        mkdir($dir);
         $file = $dir.'/test';
 
-        \file_put_contents($file, 'abc');
+        file_put_contents($file, 'abc');
 
         $linkFile = $file.'-symlink';
-        \symlink($file, $linkFile);
+        symlink($file, $linkFile);
 
         $contextBuilder->addFile('/foo', $dir);
 
         $context = $contextBuilder->getContext();
 
-        $filename = \preg_replace(<<<DOCKERFILE
+        $filename = preg_replace(<<<DOCKERFILE
             #FROM base
             ADD (.+?) /foo#
             DOCKERFILE, '$1', $context->getDockerfileContent());
-        \unlink($file);
+        unlink($file);
         $context->setCleanup(false);
         $this->assertStringEqualsFile($context->getDirectory().'/'.$filename.'/test-symlink', 'abc');
     }

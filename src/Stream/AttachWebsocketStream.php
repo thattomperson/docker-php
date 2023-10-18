@@ -30,7 +30,7 @@ class AttachWebsocketStream
      */
     public function write($data): void
     {
-        $rand = \random_int(0, 28);
+        $rand = random_int(0, 28);
         $frame = [
             'fin' => 1,
             'rsv1' => 0,
@@ -39,7 +39,7 @@ class AttachWebsocketStream
             'opcode' => 1, // We always send text
             'mask' => 1,
             'len' => \strlen($data),
-            'mask_key' => \substr(\md5(\uniqid()), $rand, 4),
+            'mask_key' => substr(md5(uniqid()), $rand, 4),
             'data' => $data,
         ];
 
@@ -65,12 +65,12 @@ class AttachWebsocketStream
         $this->socketWrite(\chr($secondByte));
 
         if (126 === $len) {
-            $this->socketWrite(\pack('n', $frame['len']));
+            $this->socketWrite(pack('n', $frame['len']));
         } elseif (127 === $len) {
             $higher = $frame['len'] >> 32;
             $lower = ($frame['len'] << 32) >> 32;
-            $this->socketWrite(\pack('N', $higher));
-            $this->socketWrite(\pack('N', $lower));
+            $this->socketWrite(pack('N', $higher));
+            $this->socketWrite(pack('N', $lower));
         }
 
         if (1 === $frame['mask']) {
@@ -91,7 +91,7 @@ class AttachWebsocketStream
      */
     public function read($waitTime = 0, $waitMicroTime = 200000, $getFrame = false)
     {
-        if (!\is_resource($this->socket) || \feof($this->socket)) {
+        if (!\is_resource($this->socket) || feof($this->socket)) {
             return null;
         }
 
@@ -99,7 +99,7 @@ class AttachWebsocketStream
         $write = null;
         $expect = null;
 
-        if (0 === \stream_select($read, $write, $expect, $waitTime, $waitMicroTime)) {
+        if (0 === stream_select($read, $write, $expect, $waitTime, $waitMicroTime)) {
             return false;
         }
 
@@ -121,9 +121,9 @@ class AttachWebsocketStream
 
         // Get length of the frame
         if (126 === $frame['len']) {
-            $frame['len'] = \unpack('n', $this->socketRead(2))[1];
+            $frame['len'] = unpack('n', $this->socketRead(2))[1];
         } elseif (127 === $frame['len']) {
-            list($higher, $lower) = \array_values(\unpack('N2', $this->socketRead(8)));
+            [$higher, $lower] = array_values(unpack('N2', $this->socketRead(8)));
             $frame['len'] = ($higher << 32) | $lower;
         }
 
@@ -151,8 +151,6 @@ class AttachWebsocketStream
     /**
      * Force to have something of the expected size (block).
      *
-     * @param $length
-     *
      * @return string
      */
     private function socketRead($length)
@@ -160,8 +158,8 @@ class AttachWebsocketStream
         $read = '';
 
         do {
-            $read .= \fread($this->socket, $length - \strlen($read));
-        } while (\strlen($read) < $length && !\feof($this->socket));
+            $read .= fread($this->socket, $length - \strlen($read));
+        } while (\strlen($read) < $length && !feof($this->socket));
 
         return $read;
     }
@@ -169,12 +167,10 @@ class AttachWebsocketStream
     /**
      * Write to the socket.
      *
-     * @param $data
-     *
      * @return int
      */
     private function socketWrite($data)
     {
-        return \fwrite($this->socket, $data);
+        return fwrite($this->socket, $data);
     }
 }
