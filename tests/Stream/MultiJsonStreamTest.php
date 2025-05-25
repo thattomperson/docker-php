@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class MultiJsonStreamTest extends TestCase
 {
-    public function jsonStreamDataProvider()
+    public static function jsonStreamDataProvider()
     {
         return [
             [
